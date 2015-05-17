@@ -12,11 +12,14 @@ Introduction
 Before we get into development details, let's see what Truckr can do! Truckr is built using Python 2, and since the app and all its dependencies (excluding Redis) are pure Python is can be run with any interpreter (CPython, Pypy, etc.). (Disclaimer: I've only tested it with CPython). First you'll need Redis, a key-value database used by Truckr. It should be available from your package manager of choice on most UNIX systems, for example:
 
 `$ apt-get install redis-server`
+
 (or)
+
 `$ brew install redis`
 
 Next, you'll need some python packages, which can be installed automatically by pip:
 (optional) `$ virtualenv truckr_env && source truckr_env/bin/activate`
+
 `$ pip install -r requirements.txt`
 
 Optionally, you can run the automatic tests on your system to make sure everything is working:
