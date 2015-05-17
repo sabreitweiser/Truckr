@@ -18,6 +18,7 @@ Before we get into development details, let's see what Truckr can do! Truckr is 
 `$ brew install redis`
 
 Next, you'll need some python packages, which can be installed automatically by pip:
+
 (optional) `$ virtualenv truckr_env && source truckr_env/bin/activate`
 
 `$ pip install -r requirements.txt`
