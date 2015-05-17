@@ -3,6 +3,7 @@
   / / / ___/ / / / ___/ //_/ ___/
  / / / /  / /_/ / /__/ ,< / /    
 /_/ /_/   \__,_/\___/_/|_/_/     
+
 ---------------------------------
 
 Introduction
@@ -38,6 +39,7 @@ Optionally, you can specify a particular food you want with the "food" parameter
 $ curl -G -d "latitude=37.775267&longitude=-122.417636&radius=0.5&food=nachos" http://localhost:8000
 
 The return is self-explanatory plaintext JSON.
+
 ---------------------------------
 
 Development
@@ -51,16 +53,19 @@ Some massaging would be nice; for example, there are a lot of trucks with multip
 The biggest part of this project is clearly the storage and retrieval of Trucks near a certain point. Given that there are only a few hundred trucks, it would certainly be possible to just check them all; however, that wouldn't scale well to, say, all the trucks in the US. One option that came to mind was a multi-indexed SQL database, so that finding trucks in a bounding rectangle would just be a simple SELECT query, but I'm not very familiar with SQL. Instead, I went with an R-tree solution, a popular data structure for GIS/GPS systems that also gives a roughly logarithmic search time. Traversing an RTree is pretty easy, but building one is difficult, so I found an external library to build it for me. I could have used or built a wrapper around the popular libspatialindex R*-tree implementation, but I wanted to keep free from C/C++ dependencies. I found a good python package, pyrtree, that used k-means clustering to balance the tree and used that instead.
 
 Once the tree is built from the data, I do some serialization and dump into redis, with each node a separate key. I don’t want to re-load the whole tree everytime, so I search through the tree in place in Redis, using some pipelining to speed things up. To search through the tree, I form a bounding rectangle around the search radius and get all of the trucks in that rectangle; then I filter out the trucks that aren’t really in the radius (using geopy’s distance algorithm). Once I’ve found all the trucks in the search radius, I filter out the ones without the food if a food query is specified. I then return the results as a plaintext JSON body.
+
 ---------------------------------
 
 Testing
 ---------------------------------
 Testing Truckr was a mixed bag; the automatic tests will easily catch big HALT_AND_CATCH_FIRE type errors, but testing for subtle correctness issues is difficult. The best thing I could do was test against a sequential version of the same framework, that checked every truck. The results were exactly the same for every query that I ran, so I was satisfied.
+
 ---------------------------------
 
 Performance
 ---------------------------------
 Performance is decent, returning in under 100ms on most queries of less than a mile radius on my system. The R-Tree as noticeably better than the sequential version that tested every truck; for example my test query for a half mile radius around Uber HQ ran in about half the time. Of course, your mileage may vary depending on the query and the app-Redis network performance.
+
 ---------------------------------
 
 Documentation
@@ -76,6 +81,7 @@ The load_trucks function takes an input file path to a CSV file similar to the o
 The get_trucks function takes a latitude, longitude, radius, and a Redis instance, and yields all trucks in that radius from the RTree in the redis instance. It also optionally takes a root_key parameter that gives the key pointing to the root of the RTree, giving a slight optimization in case you want to string it together with automated loading.
 
 The “index.py” app gives an example of how to use the package. It forms a simple API that takes GET requests and returns JSON that includes trucks and foods available in the specified area. It will also filter trucks to return those that have a specific food if one is given.
+
 ---------------------------------
 
 Possible Upgrades
