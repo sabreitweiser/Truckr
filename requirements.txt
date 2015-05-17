@@ -1,0 +1,5 @@
+geopy
+https://pyrtree.googlecode.com/archive/0a12e64c7386678ed697c1d6e011f78f2518cc89.tar.gz
+redis
+gunicorn
+fakeredis
