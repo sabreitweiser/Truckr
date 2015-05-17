@@ -11,33 +11,33 @@ Introduction
 ---------------------------------
 Before we get into development details, let's see what Truckr can do! Truckr is built using Python 2, and since the app and all its dependencies (excluding Redis) are pure Python is can be run with any interpreter (CPython, Pypy, etc.). (Disclaimer: I've only tested it with CPython). First you'll need Redis, a key-value database used by Truckr. It should be available from your package manager of choice on most UNIX systems, for example:
 
-$ apt-get install redis-server
+`$ apt-get install redis-server`
 (or)
-$ brew install redis
+`$ brew install redis`
 
 Next, you'll need some python packages, which can be installed automatically by pip:
-(optional) $ virtualenv truckr_env && source truckr_env/bin/activate
-$ pip install -r requirements.txt
+(optional) `$ virtualenv truckr_env && source truckr_env/bin/activate`
+`$ pip install -r requirements.txt`
 
 Optionally, you can run the automatic tests on your system to make sure everything is working:
 
-$ python setup.py test
+`$ python setup.py test`
 
 (NB: Installing the package isn’t necessary, since it can run fine in place.) Finally, you should start up redis and gunicorn (a python WSGI web-server than came with the requirements). Running Redis in the foreground, rather than as a background daemon, is recommended so that you can monitor it. You can do this by opening a new shell and running
 
-$ redis-server
+`$ redis-server`
 
 Back in your virtual environment shell, run the app on gunicorn (or any other WSGI server)
 
-$ gunicorn index:app
+`$ gunicorn index:app`
 
 Using curl, or your browser, you can now use the service. You'll need a latitude and longitude you want to search around, as well as a radius (in miles) to search, encoded as a GET query string. For example, you can get all trucks and foods available around Uber headquarters in a half mile radius with
 
-$ curl -G -d "latitude=37.775267&longitude=-122.417636&radius=0.5" http://localhost:8000
+`$ curl -G -d "latitude=37.775267&longitude=-122.417636&radius=0.5" http://localhost:8000`
 
 Optionally, you can specify a particular food you want with the "food" parameter. For example, looking at the previous result I see “NACHOS” are available, so I try finding nachos in the same search area
 
-$ curl -G -d "latitude=37.775267&longitude=-122.417636&radius=0.5&food=nachos" http://localhost:8000
+`$ curl -G -d "latitude=37.775267&longitude=-122.417636&radius=0.5&food=nachos" http://localhost:8000`
 
 The return is self-explanatory plaintext JSON.
 
@@ -73,13 +73,13 @@ Documentation
 ---------------------------------
 Most of the code is self-documented by doc-strings. The dir command will show you available symbols from the truckr modules, and the help command should bring up function signatures and doc-strings.
 
-The most important parts of the package are the Truck class, the load_trucks function, and the get_trucks function.
+The most important parts of the package are the `Truck` class, the `load_trucks` function, and the `get_trucks` function.
 
-The Truck class represents an individual Truck location, keeping track of name, address, lat(itude), lon(gitude), and food, and provides a string conversion that prints in “name: address” format.
+The `Truck` class represents an individual Truck location, keeping track of name, address, lat(itude), lon(gitude), and food, and provides a string conversion that prints in “name: address” format.
 
-The load_trucks function takes an input file path to a CSV file similar to the one exported by DataSF, as well as a Redis instance, and loads an RTree of trucks from the CSV into the Redis instance.
+The `load_trucks` function takes an input file path to a CSV file similar to the one exported by DataSF, as well as a Redis instance, and loads an RTree of trucks from the CSV into the Redis instance.
 
-The get_trucks function takes a latitude, longitude, radius, and a Redis instance, and yields all trucks in that radius from the RTree in the redis instance. It also optionally takes a root_key parameter that gives the key pointing to the root of the RTree, giving a slight optimization in case you want to string it together with automated loading.
+The `get_trucks` function takes a latitude, longitude, radius, and a Redis instance, and yields all trucks in that radius from the RTree in the redis instance. It also optionally takes a root_key parameter that gives the key pointing to the root of the RTree, giving a slight optimization in case you want to string it together with automated loading.
 
 The “index.py” app gives an example of how to use the package. It forms a simple API that takes GET requests and returns JSON that includes trucks and foods available in the specified area. It will also filter trucks to return those that have a specific food if one is given.
 
