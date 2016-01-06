@@ -9,7 +9,7 @@
 
 Introduction
 ---------------------------------
-Before we get into development details, let's see what Truckr can do! Truckr is built using Python 2, and since the app and all its dependencies (excluding Redis) are pure Python is can be run with any interpreter (CPython, Pypy, etc.). (Disclaimer: I've only tested it with CPython). First you'll need Redis, a key-value database used by Truckr. It should be available from your package manager of choice on most UNIX systems, for example:
+Truckr is the result of about 8 hours of work on a coding challenge to build a rudimentary web API for a food truck location service. Before we get into development details, let's see what Truckr can do! Truckr is built using Python 2, and since the app and all its dependencies (excluding Redis) are pure Python is can be run with any interpreter (CPython, Pypy, etc.). (Disclaimer: I've only tested it with CPython). First you'll need Redis, a key-value database used by Truckr. It should be available from your package manager of choice on most UNIX systems, for example:
 
 `$ apt-get install redis-server`
 
